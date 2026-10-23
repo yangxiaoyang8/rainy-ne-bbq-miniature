@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071018" />
+    <meta name="description" content="雨夜东北烧烤店互动 3D 微缩模型" />
+    <title>雨夜 · 东北烧烤店微缩模型</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main id="scene" aria-label="可旋转的雨夜东北烧烤店三维微缩模型"></main>
+
+    <header class="masthead">
+      <div class="eyebrow"><span class="live-dot"></span><span id="scene-status">秋日雨夜 · 营业中</span></div>
+      <h1>老北街<span>炭火烧烤</span></h1>
+      <p id="scene-caption">一间被雨声包住的小店</p>
+    </header>
+
+    <section class="controls" aria-label="灯光控制">
+      <div class="panel-label">灯光控制台</div>
+      <button class="switch is-on" id="sign-switch" type="button" aria-pressed="true">
+        <span class="switch-icon sign-icon">北</span>
+        <span class="switch-copy"><strong>招牌灯</strong><small>NEON SIGN</small></span>
+        <span class="switch-track"><i></i></span>
+      </button>
+      <button class="switch is-on" id="room-switch" type="button" aria-pressed="true">
+        <span class="switch-icon bulb-icon"></span>
+        <span class="switch-copy"><strong>室内灯</strong><small>WARM INTERIOR</small></span>
+        <span class="switch-track"><i></i></span>
+      </button>
+      <div class="control-row">
+        <button id="auto-rotate" class="mini-btn is-active" type="button" aria-pressed="true">自动环绕</button>
+        <button id="reset-view" class="mini-btn" type="button">回到门前</button>
+      </div>
+      <div class="scene-picker" aria-label="场景切换">
+        <div class="picker-group" data-setting="floor" aria-label="楼层"><span>楼层</span><button type="button" data-value="1" class="selected" aria-pressed="true">一楼</button><button type="button" data-value="2" aria-pressed="false">二楼</button></div>
+        <div class="picker-group" data-setting="view" aria-label="观看位置"><span>视角</span><button type="button" data-value="outside" class="selected" aria-pressed="true">室外</button><button type="button" data-value="inside" aria-pressed="false">室内</button></div>
+        <div class="picker-group" data-setting="season" aria-label="季节"><span>季节</span><button type="button" data-value="spring" aria-pressed="false">春</button><button type="button" data-value="summer" aria-pressed="false">夏</button><button type="button" data-value="autumn" class="selected" aria-pressed="true">秋</button><button type="button" data-value="winter" aria-pressed="false">冬</button></div>
+        <div class="picker-group" data-setting="weather" aria-label="天气"><span>天气</span><button type="button" data-value="clear" aria-pressed="false">晴</button><button type="button" data-value="rain" class="selected" aria-pressed="true">雨</button><button type="button" data-value="snow" aria-pressed="false">雪</button></div>
+        <div class="picker-group" data-setting="time" aria-label="时间"><span>时间</span><button type="button" data-value="day" aria-pressed="false">白天</button><button type="button" data-value="dusk" aria-pressed="false">黄昏</button><button type="button" data-value="night" class="selected" aria-pressed="true">夜晚</button></div>
+      </div>
+    </section>
+
+    <div class="hint" id="hint">
+      <span class="mouse"><i></i></span>
+      <span>拖动旋转 · 滚轮缩放</span>
+    </div>
+    <div class="soundscape" aria-hidden="true"><i></i><i></i><i></i><i></i><span id="ambience-caption">RAIN / CHARCOAL / NIGHT</span></div>
+    <div class="vignette"></div>
+    <noscript>请开启 JavaScript 以查看互动模型。</noscript>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
