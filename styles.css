@@ -71,12 +71,14 @@ body { color: var(--paper); user-select: none; }
   backdrop-filter: blur(18px) saturate(1.25);
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
 }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; }
 .panel-label {
   margin: 0 5px 10px;
   color: rgba(227, 234, 239, .4);
   font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
   letter-spacing: .18em;
 }
+.panel-toggle { display: none; }
 .switch {
   display: grid;
   grid-template-columns: 38px 1fr 34px;
@@ -153,6 +155,20 @@ body { color: var(--paper); user-select: none; }
 .picker-group button:hover { color: #fff; background: rgba(255,255,255,.1); }
 .picker-group button.selected { color: #ffe4b5; border-color: rgba(242,160,76,.43); background: rgba(191,90,37,.24); }
 
+.audio-controls { margin-top: 11px; padding: 11px 2px 0; border-top: 1px solid rgba(255,255,255,.09); }
+.audio-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.audio-heading > span { color: rgba(235,236,231,.7); font-size: 10px; letter-spacing: .1em; }
+.audio-heading small { color: rgba(225,230,232,.37); font-size: 9px; }
+.audio-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.audio-button { min-height: 34px; border: 1px solid rgba(255,255,255,.1); border-radius: 9px; background: rgba(255,255,255,.035); color: rgba(232,236,235,.58); font: 600 10px/1.2 system-ui,sans-serif; cursor: pointer; transition: .2s; }
+.audio-button span { margin-right: 3px; font-size: 14px; vertical-align: -1px; }
+.audio-button:hover { color: #fff; border-color: rgba(255,255,255,.23); }
+.audio-button.is-active { color: #ffe2b0; border-color: rgba(244,166,84,.43); background: rgba(180,95,46,.22); }
+.volume-control { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: rgba(235,236,231,.52); font-size: 10px; }
+.volume-control span { flex: 0 0 26px; }
+.volume-control input { flex: 1; min-width: 0; accent-color: #ee9d56; cursor: pointer; }
+.volume-control output { min-width: 30px; text-align: right; font: 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace; color: rgba(235,236,231,.48); }
+
 .hint {
   position: fixed;
   left: clamp(20px, 5vw, 72px);
@@ -201,10 +217,17 @@ body { color: var(--paper); user-select: none; }
   .masthead { top: 20px; left: 20px; }
   .masthead p { display: none; }
   .soundscape { display: none; }
-  .controls { right: 12px; bottom: 12px; width: 238px; padding: 10px; }
+  .controls { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); width: min(310px, calc(100vw - 24px)); padding: 10px; max-height: min(70dvh, 540px); overflow-y: auto; }
+  .controls:not(.is-open) { width: auto; padding: 0; overflow: visible; }
+  .controls:not(.is-open) .panel-body, .controls:not(.is-open) .panel-label { display: none; }
+  .controls:not(.is-open) .panel-heading { display: block; }
+  .controls.is-open .panel-toggle { margin-left: auto; }
+  .panel-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 0 12px; border: 1px solid rgba(255,185,102,.25); border-radius: 12px; background: rgba(55,35,28,.68); color: #ffe6c2; font: 600 11px/1 system-ui,sans-serif; cursor: pointer; }
+  .panel-toggle-icon { font-size: 17px; line-height: 1; }
+  .panel-label { margin-bottom: 0; }
+  .panel-body { margin-top: 9px; }
   .switch { padding: 7px; grid-template-columns: 32px 1fr 32px; }
   .switch-icon { width: 30px; height: 30px; }
-  .controls { max-height: min(78vh, 530px); overflow-y: auto; }
   .picker-group button { padding: 6px 2px; font-size: 9px; }
   .hint { left: 18px; bottom: 16px; }
 }
