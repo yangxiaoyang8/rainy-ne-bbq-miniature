@@ -165,6 +165,7 @@ export function createSoundscape(getScene) {
       window.clearInterval(musicTimer);
     }
     updateStatus();
+    if (!musicOn && !ambienceOn) context.suspend().catch(() => {});
   }
 
   function toggleAmbience() {
@@ -176,6 +177,7 @@ export function createSoundscape(getScene) {
     if (ambienceOn) ambienceTimer = window.setInterval(tickAmbience, 180);
     else window.clearInterval(ambienceTimer);
     updateStatus();
+    if (!musicOn && !ambienceOn) context.suspend().catch(() => {});
   }
 
   musicButton.addEventListener('click', toggleMusic);
