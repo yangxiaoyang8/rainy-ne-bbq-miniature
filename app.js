@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createSoundscape } from './sound.js';
 
 const container = document.querySelector('#scene');
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
@@ -18,14 +19,14 @@ scene.fog = new THREE.FogExp2(0x0d1c27, 0.024);
 
 const initialAspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(initialAspect < .72 ? 47 : 34, initialAspect, 0.1, 120);
-camera.position.set(initialAspect < .72 ? 22 : 18, initialAspect < .72 ? 16 : 13, initialAspect < .72 ? 28 : 23);
+camera.position.set(initialAspect < .72 ? 28 : 18, initialAspect < .72 ? 20 : 13, initialAspect < .72 ? 36 : 23);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.055;
 controls.target.set(0, 4.2, 0.4);
 controls.minDistance = 10;
-controls.maxDistance = 36;
+controls.maxDistance = 52;
 controls.minPolarAngle = Math.PI * 0.13;
 controls.maxPolarAngle = Math.PI * 0.48;
 controls.autoRotate = true;
@@ -747,6 +748,7 @@ cameraFill.position.set(7, 9, 12); scene.add(cameraFill);
 
 // UI state and smooth light transitions.
 const state = { sign: true, room: true, floor: '1', view: 'outside', season: 'autumn', weather: 'rain', time: 'night' };
+const sound = createSoundscape(() => state);
 const targets = { sign: 1, room: 1 };
 let signLevel = 1, roomLevel = 1;
 roomLights.forEach(light => { light.userData.onIntensity = light.intensity; });
@@ -797,10 +799,11 @@ function setView() {
     camera.position.set(portrait ? 20 : 16, portrait ? 15 : 11.6, portrait ? 25 : 21);
     controls.target.set(0, 7.2, .25);
   } else {
-    camera.position.set(portrait ? 22 : 18, portrait ? 16 : 13, portrait ? 28 : 23);
+    camera.position.set(portrait ? 28 : 18, portrait ? 20 : 13, portrait ? 36 : 23);
     controls.target.set(0, 4.2, .4);
   }
   controls.update();
+  sound.updateScene();
 }
 const seasonNames = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
 const weatherNames = { clear: '晴', rain: '雨', snow: '雪' };
@@ -828,6 +831,7 @@ function applyAtmosphere() {
   document.querySelector('#scene-status').textContent = `${seasonNames[state.season]}日 · ${weatherTime} · 营业中`;
   document.querySelector('#scene-caption').textContent = state.weather === 'rain' ? '一间被雨声包住的小店' : state.weather === 'snow' ? '热串和雪花，都是东北的冬夜' : '炭火还旺，来坐会儿吧';
   document.querySelector('#ambience-caption').textContent = `${state.weather.toUpperCase()} / CHARCOAL / ${state.time.toUpperCase()}`;
+  sound.updateScene();
 }
 document.querySelectorAll('.picker-group').forEach(group => {
   group.addEventListener('click', event => {
@@ -854,9 +858,19 @@ document.querySelector('#reset-view').addEventListener('click', () => {
 });
 applyAtmosphere();
 
+const panel = document.querySelector('.controls');
+const panelToggle = document.querySelector('#panel-toggle');
+function setPanelOpen(open) {
+  panel.classList.toggle('is-open', open);
+  panelToggle.setAttribute('aria-expanded', String(open));
+  document.querySelector('#panel-toggle-label').textContent = open ? '收起设置' : '打开设置';
+}
+panelToggle.addEventListener('click', () => setPanelOpen(!panel.classList.contains('is-open')));
+
 let interacted = false;
 controls.addEventListener('start', () => {
   if (!interacted) { interacted = true; document.querySelector('#hint').style.opacity = '.15'; }
+  if (window.matchMedia('(max-width: 640px)').matches) setPanelOpen(false);
 });
 
 const clock = new THREE.Clock();
