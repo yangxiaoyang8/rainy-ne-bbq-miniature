@@ -26,8 +26,12 @@
       <p id="scene-caption">一间被雨声包住的小店</p>
     </header>
 
-    <section class="controls" aria-label="灯光控制">
-      <div class="panel-label">灯光控制台</div>
+    <section class="controls" aria-label="场景与声音控制">
+      <div class="panel-heading">
+        <div class="panel-label">场景控制台</div>
+        <button id="panel-toggle" class="panel-toggle" type="button" aria-controls="panel-body" aria-expanded="false"><span class="panel-toggle-icon" aria-hidden="true">☷</span><span id="panel-toggle-label">打开设置</span></button>
+      </div>
+      <div id="panel-body" class="panel-body">
       <button class="switch is-on" id="sign-switch" type="button" aria-pressed="true">
         <span class="switch-icon sign-icon">北</span>
         <span class="switch-copy"><strong>招牌灯</strong><small>NEON SIGN</small></span>
@@ -48,6 +52,15 @@
         <div class="picker-group" data-setting="season" aria-label="季节"><span>季节</span><button type="button" data-value="spring" aria-pressed="false">春</button><button type="button" data-value="summer" aria-pressed="false">夏</button><button type="button" data-value="autumn" class="selected" aria-pressed="true">秋</button><button type="button" data-value="winter" aria-pressed="false">冬</button></div>
         <div class="picker-group" data-setting="weather" aria-label="天气"><span>天气</span><button type="button" data-value="clear" aria-pressed="false">晴</button><button type="button" data-value="rain" class="selected" aria-pressed="true">雨</button><button type="button" data-value="snow" aria-pressed="false">雪</button></div>
         <div class="picker-group" data-setting="time" aria-label="时间"><span>时间</span><button type="button" data-value="day" aria-pressed="false">白天</button><button type="button" data-value="dusk" aria-pressed="false">黄昏</button><button type="button" data-value="night" class="selected" aria-pressed="true">夜晚</button></div>
+      </div>
+      <div class="audio-controls" aria-label="声音控制">
+        <div class="audio-heading"><span>声音</span><small id="audio-status" role="status">点击开启，默认静音</small></div>
+        <div class="audio-buttons">
+          <button id="music-switch" class="audio-button" type="button" aria-pressed="false"><span aria-hidden="true">♫</span> 店内音乐</button>
+          <button id="ambience-switch" class="audio-button" type="button" aria-pressed="false"><span aria-hidden="true">☂</span> 环境音效</button>
+        </div>
+        <label class="volume-control" for="audio-volume"><span>音量</span><input id="audio-volume" type="range" min="0" max="100" value="55" aria-label="声音音量" /><output id="audio-volume-value" for="audio-volume">55%</output></label>
+      </div>
       </div>
     </section>
 
