@@ -607,15 +607,20 @@ const canopy = new THREE.Mesh(new THREE.CylinderGeometry(2.65, 2.65, .06, 8), ca
 canopy.position.set(-3.7, 4.0, 5.15); canopy.scale.z = .52; canopy.rotation.y = Math.PI / 8; world.add(canopy);
 cylinder('canopy pole', .045, .055, 3.8, [-3.7, 2.05, 5.15], paintedMetal, world, 10);
 
-// Utility pole, wires and amber street lamp.
-cylinder('utility pole', .14, .19, 8.9, [-8.1, 4.38, -1.4], darkMetal, world, 14);
-box('lamp arm', [2.0, .11, .11], [-7.18, 7.3, -1.4], darkMetal, world);
-const lampShade = cylinder('lamp shade', .54, .28, .24, [-6.25, 7.06, -1.4], darkMetal, world, 18);
+// Rear utility poles keep both cables outside the upstairs rooms.
+const utilityZ = -4.8;
+cylinder('utility pole', .14, .19, 8.9, [-9.1, 4.38, utilityZ], darkMetal, world, 14);
+cylinder('utility support pole', .14, .19, 8.9, [9.1, 4.38, utilityZ], darkMetal, world, 14);
+box('lamp arm', [2.0, .11, .11], [-8.18, 7.3, utilityZ], darkMetal, world);
+const lampShade = cylinder('lamp shade', .54, .28, .24, [-7.25, 7.06, utilityZ], darkMetal, world, 18);
 const streetBulbMat = new THREE.MeshStandardMaterial({ color: 0xffd38a, emissive: 0xffad42, emissiveIntensity: 2.1 });
-cylinder('street bulb', .23, .23, .08, [-6.25, 6.92, -1.4], streetBulbMat, world, 16);
+cylinder('street bulb', .23, .23, .08, [-7.25, 6.92, utilityZ], streetBulbMat, world, 16);
 const streetLight = new THREE.PointLight(0xffb464, 240, 14, 2.0);
-streetLight.position.set(-6.2, 6.7, -1.2); streetLight.castShadow = true; streetLight.shadow.mapSize.set(512, 512); world.add(streetLight);
+streetLight.position.set(-7.2, 6.7, utilityZ + .2); streetLight.castShadow = true; streetLight.shadow.mapSize.set(512, 512); world.add(streetLight);
 const exteriorLights = [streetLight];
+const streetLampPools = [];
+const streetLampLenses = [];
+const facadeLampLenses = [];
 
 // A pair of clearly visible street lamps frames the storefront.
 function addStreetLamp(x, z, facing = 1) {
@@ -627,20 +632,22 @@ function addStreetLamp(x, z, facing = 1) {
   elbow.rotation.z = Math.PI / 2;
   const shade = cylinder('street lamp shade', .42, .23, .24, [facing * 1.1, 4.84, 0], darkMetal, lampGroup, 18);
   const lensMat = new THREE.MeshStandardMaterial({ color: 0xffe4ac, emissive: 0xffb354, emissiveIntensity: 4.6, roughness: .22 });
+  streetLampLenses.push(lensMat);
   const lens = cylinder('street lamp lens', .22, .28, .1, [facing * 1.1, 4.67, 0], lensMat, lampGroup, 18);
   const light = new THREE.PointLight(0xffbd6a, 360, 14, 1.9);
   light.position.set(facing * 1.1, 4.58, 0); light.castShadow = true; light.shadow.mapSize.set(512, 512); lampGroup.add(light);
   exteriorLights.push(light);
-  lightPool(x + facing * 1.1, z, 5.8, 5.8, .28);
+  streetLampPools.push(lightPool(x + facing * 1.1, z, 5.8, 5.8, .28));
 }
-addStreetLamp(-7.4, 4.5, 1);
-addStreetLamp(7.3, 1.9, -1);
+addStreetLamp(-8.6, 4.8, 1);
+addStreetLamp(8.9, 4.8, -1);
 
 // Small downlights make the facade legible without losing the rainy-night mood.
 for (const x of [-4.2, -2.1, 0, 2.1, 4.2]) {
   const fixture = cylinder('facade downlight', .11, .15, .2, [x, 4.72, 4.0], darkMetal, world, 12);
   fixture.rotation.x = Math.PI / 2;
   const lensMat = new THREE.MeshStandardMaterial({ color: 0xffd59a, emissive: 0xffa64b, emissiveIntensity: 2.5 });
+  facadeLampLenses.push(lensMat);
   const lens = cylinder('facade lamp lens', .095, .095, .025, [x, 4.63, 4.11], lensMat, world, 12);
   lens.rotation.x = Math.PI / 2;
   const spot = new THREE.SpotLight(0xffba6a, 150, 10, .58, .55, 1.6);
@@ -680,8 +687,8 @@ function wire(points) {
   const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 32, .018, 5, false), darkMetal);
   tube.castShadow = true; world.add(tube);
 }
-wire([[-8.1, 8.1, -1.4], [-4, 7.3, -1.7], [0, 7.1, -1.35], [4.8, 7.45, -1.65]]);
-wire([[-8.1, 7.8, -1.2], [-4, 6.95, -1.2], [0, 6.82, -1.0], [4.8, 7.2, -1.25]]);
+wire([[-9.1, 8.1, utilityZ - .12], [-4.5, 7.25, utilityZ - .12], [0, 7.05, utilityZ - .12], [4.5, 7.25, utilityZ - .12], [9.1, 8.1, utilityZ - .12]]);
+wire([[-9.1, 7.8, utilityZ + .12], [-4.5, 6.95, utilityZ + .12], [0, 6.75, utilityZ + .12], [4.5, 6.95, utilityZ + .12], [9.1, 7.8, utilityZ + .12]]);
 
 // Manhole and drains.
 const manhole = cylinder('manhole', .82, .82, .05, [4.2, -.02, -3.0], new THREE.MeshStandardMaterial({ color: 0x2b3438, metalness: .7, roughness: .36 }), world, 32);
@@ -815,18 +822,33 @@ function applyAtmosphere() {
     night: { sky: 0x0d1c27, hemi: 2.15, moon: 3.35, fill: 1.45, lamp: 1, rim: 1.5 },
   };
   const p = palettes[state.time];
-  scene.background.setHex(p.sky);
-  scene.fog.color.setHex(p.sky);
-  scene.fog.density = state.weather === 'clear' ? .013 : state.weather === 'snow' ? .032 : .024;
-  hemisphere.intensity = p.hemi; moon.intensity = p.moon; cameraFill.intensity = p.fill; rim.intensity = p.rim;
+  const sunny = state.weather === 'clear' && state.time === 'day';
+  const sky = sunny ? 0x83c6f3 : p.sky;
+  scene.background.setHex(sky);
+  scene.fog.color.setHex(sky);
+  scene.fog.density = sunny ? .004 : state.weather === 'clear' ? .013 : state.weather === 'snow' ? .032 : .024;
+  hemisphere.color.setHex(sunny ? 0xdcefff : 0x9bc6df);
+  hemisphere.groundColor.setHex(sunny ? 0x8b7961 : 0x26333a);
+  hemisphere.intensity = sunny ? 3.7 : p.hemi;
+  moon.color.setHex(sunny ? 0xffe8af : 0xa8d0ee);
+  moon.position.set(sunny ? -8 : -9, sunny ? 18 : 15, sunny ? 11 : -7);
+  moon.intensity = sunny ? 5.4 : p.moon;
+  cameraFill.color.setHex(sunny ? 0xffe2b9 : 0x8eb9d2);
+  cameraFill.intensity = sunny ? 1.6 : p.fill;
+  rim.intensity = sunny ? .15 : p.rim;
+  renderer.toneMappingExposure = sunny ? 1.28 : state.time === 'day' ? 1.12 : 1.06;
   exteriorLights.forEach(light => { light.intensity = light.userData.onIntensity * p.lamp; });
+  streetLampPools.forEach(pool => { pool.opacity = p.lamp * .28; });
+  streetLampLenses.forEach(lens => { lens.emissiveIntensity = p.lamp * 4.6; });
+  facadeLampLenses.forEach(lens => { lens.emissiveIntensity = p.lamp * 2.5; });
   rain.visible = state.weather === 'rain';
   snow.visible = state.weather === 'snow';
   leaves.visible = state.season !== 'winter';
   leafMat.color.setHex({ spring: 0xab5977, summer: 0x2e6140, autumn: 0x944117, winter: 0x6d5741 }[state.season]);
   winterSnow.visible = state.season === 'winter';
-  wetRoad.roughness = state.weather === 'clear' ? .72 : state.weather === 'snow' ? .58 : .2;
-  wetRoad.metalness = state.weather === 'clear' ? .06 : .36;
+  wetRoad.color.setHex(sunny ? 0xa9b3ae : state.time === 'day' ? 0x687984 : 0x47535b);
+  wetRoad.roughness = state.weather === 'clear' ? .84 : state.weather === 'snow' ? .58 : .2;
+  wetRoad.metalness = state.weather === 'clear' ? .03 : .36;
   const weatherTime = state.time === 'night' ? `${weatherNames[state.weather]}夜` : `${weatherNames[state.weather]}天 · ${timeNames[state.time]}`;
   document.querySelector('#scene-status').textContent = `${seasonNames[state.season]}日 · ${weatherTime} · 营业中`;
   document.querySelector('#scene-caption').textContent = state.weather === 'rain' ? '一间被雨声包住的小店' : state.weather === 'snow' ? '热串和雪花，都是东北的冬夜' : '炭火还旺，来坐会儿吧';
