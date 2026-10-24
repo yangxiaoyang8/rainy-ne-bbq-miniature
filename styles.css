@@ -164,7 +164,8 @@ body { color: var(--paper); user-select: none; }
 .audio-button span { margin-right: 3px; font-size: 14px; vertical-align: -1px; }
 .audio-button:hover { color: #fff; border-color: rgba(255,255,255,.23); }
 .audio-button.is-active { color: #ffe2b0; border-color: rgba(244,166,84,.43); background: rgba(180,95,46,.22); }
-.volume-control { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: rgba(235,236,231,.52); font-size: 10px; }
+.volume-control { display: flex; align-items: center; gap: 10px; margin-top: 8px; color: rgba(235,236,231,.52); font-size: 10px; }
+.audio-buttons + .volume-control { margin-top: 11px; }
 .volume-control span { flex: 0 0 26px; }
 .volume-control input { flex: 1; min-width: 0; accent-color: #ee9d56; cursor: pointer; }
 .volume-control output { min-width: 30px; text-align: right; font: 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace; color: rgba(235,236,231,.48); }
