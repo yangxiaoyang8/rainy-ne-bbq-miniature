@@ -68,16 +68,16 @@ export function createSoundscape(getScene) {
     return true;
   }
 
-  function playNoiseBurst(time, duration, frequency, level) {
+  function playNoiseBurst(time, duration, frequency, level, filterType = 'bandpass', attack = .008) {
     const source = context.createBufferSource();
     source.buffer = noise;
     const filter = context.createBiquadFilter();
-    filter.type = 'bandpass';
+    filter.type = filterType;
     filter.frequency.value = frequency;
     filter.Q.value = .7;
     const envelope = context.createGain();
     envelope.gain.setValueAtTime(.0001, time);
-    envelope.gain.linearRampToValueAtTime(level, time + .008);
+    envelope.gain.linearRampToValueAtTime(level, time + attack);
     envelope.gain.exponentialRampToValueAtTime(.0001, time + duration);
     source.connect(filter).connect(envelope).connect(ambienceBus);
     source.start(time, Math.random() * (noise.duration - duration), duration);
@@ -88,7 +88,8 @@ export function createSoundscape(getScene) {
     if (!context || context.state !== 'running' || !ambienceOn) return;
     const time = context.currentTime + .02;
     const scene = getScene();
-    if (Math.random() < .26) playNoiseBurst(time, .025 + Math.random() * .07, 800 + Math.random() * 1900, .065);
+    // A rare, soft low crackle reads as charcoal; sharp high-frequency clicks sounded synthetic.
+    if (Math.random() < .1) playNoiseBurst(time, .09 + Math.random() * .12, 380 + Math.random() * 380, scene.view === 'inside' ? .028 : .016, 'lowpass', .025);
     if (scene.weather === 'rain' && Math.random() < .42) {
       playNoiseBurst(time, .035 + Math.random() * .07, 1100 + Math.random() * 2600, .025);
     }
