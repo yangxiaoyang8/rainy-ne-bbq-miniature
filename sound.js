@@ -7,7 +7,7 @@ export function createSoundscape(getScene) {
   const status = document.querySelector('#audio-status');
   const visualizer = document.querySelector('.soundscape');
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  let context, master, musicBus, ambienceBus, rainGain, windGain, noise;
+  let context, master, musicBus, ambienceBus, rainGain, windGain, fireGain, noise;
   let musicTimer, ambienceTimer, nextStep = 0, step = 0;
   let musicOn = false, ambienceOn = false;
   let volume = Number(volumeInput.value) / 100;
@@ -60,8 +60,12 @@ export function createSoundscape(getScene) {
       windGain = context.createGain();
       windGain.gain.value = 0;
       windGain.connect(ambienceBus);
+      fireGain = context.createGain();
+      fireGain.gain.value = 0;
+      fireGain.connect(ambienceBus);
       loopNoise('highpass', 380, rainGain);
       loopNoise('lowpass', 310, windGain);
+      loopNoise('lowpass', 700, fireGain);
       updateScene();
     }
     context.resume().catch(() => { status.textContent = '请再点一次开启声音'; });
@@ -88,8 +92,8 @@ export function createSoundscape(getScene) {
     if (!context || context.state !== 'running' || !ambienceOn) return;
     const time = context.currentTime + .02;
     const scene = getScene();
-    // A rare, soft low crackle reads as charcoal; sharp high-frequency clicks sounded synthetic.
-    if (Math.random() < .1) playNoiseBurst(time, .09 + Math.random() * .12, 380 + Math.random() * 380, scene.view === 'inside' ? .028 : .016, 'lowpass', .025);
+    // Keep the charcoal crackle audible over rain without the old sharp clicks.
+    if (Math.random() < .2) playNoiseBurst(time, .07 + Math.random() * .1, 520 + Math.random() * 460, scene.view === 'inside' ? .1 : .075, 'lowpass', .014);
     if (scene.weather === 'rain' && Math.random() < .42) {
       playNoiseBurst(time, .035 + Math.random() * .07, 1100 + Math.random() * 2600, .025);
     }
@@ -149,6 +153,7 @@ export function createSoundscape(getScene) {
     const scene = getScene();
     target(rainGain, scene.weather === 'rain' ? (scene.view === 'inside' ? .045 : .105) : 0, .4);
     target(windGain, scene.weather === 'snow' ? .08 : scene.weather === 'clear' ? .027 : .014, .5);
+    target(fireGain, scene.view === 'inside' ? .042 : .025, .35);
     updateStatus();
   }
 
