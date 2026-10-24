@@ -2,15 +2,21 @@
 export function createSoundscape(getScene) {
   const musicButton = document.querySelector('#music-switch');
   const ambienceButton = document.querySelector('#ambience-switch');
-  const volumeInput = document.querySelector('#audio-volume');
-  const volumeValue = document.querySelector('#audio-volume-value');
+  // A cached older page may still have the former shared slider during rollout.
+  const legacyVolumeInput = document.querySelector('#audio-volume');
+  const legacyVolumeValue = document.querySelector('#audio-volume-value');
+  const musicVolumeInput = document.querySelector('#music-volume') || legacyVolumeInput;
+  const musicVolumeValue = document.querySelector('#music-volume-value') || legacyVolumeValue;
+  const ambienceVolumeInput = document.querySelector('#ambience-volume') || legacyVolumeInput;
+  const ambienceVolumeValue = document.querySelector('#ambience-volume-value') || legacyVolumeValue;
   const status = document.querySelector('#audio-status');
   const visualizer = document.querySelector('.soundscape');
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   let context, master, musicBus, ambienceBus, rainGain, windGain, fireGain, noise;
   let musicTimer, ambienceTimer, nextStep = 0, step = 0;
   let musicOn = false, ambienceOn = false;
-  let volume = Number(volumeInput.value) / 100;
+  let musicVolume = Number(musicVolumeInput.value) / 100;
+  let ambienceVolume = Number(ambienceVolumeInput.value) / 100;
 
   if (!AudioContextClass) {
     musicButton.disabled = true;
@@ -45,7 +51,7 @@ export function createSoundscape(getScene) {
     if (!context) {
       context = new AudioContextClass();
       master = context.createGain();
-      master.gain.value = volume * .7;
+      master.gain.value = .7;
       master.connect(context.destination);
       musicBus = context.createGain();
       musicBus.gain.value = 0;
@@ -162,7 +168,7 @@ export function createSoundscape(getScene) {
     musicOn = !musicOn;
     musicButton.classList.toggle('is-active', musicOn);
     musicButton.setAttribute('aria-pressed', String(musicOn));
-    target(musicBus, musicOn ? 1 : 0, .08);
+    target(musicBus, musicOn ? musicVolume : 0, .08);
     if (musicOn) {
       nextStep = context.currentTime + .07;
       scheduleMusic();
@@ -179,7 +185,7 @@ export function createSoundscape(getScene) {
     ambienceOn = !ambienceOn;
     ambienceButton.classList.toggle('is-active', ambienceOn);
     ambienceButton.setAttribute('aria-pressed', String(ambienceOn));
-    target(ambienceBus, ambienceOn ? 1 : 0, .12);
+    target(ambienceBus, ambienceOn ? ambienceVolume : 0, .12);
     if (ambienceOn) ambienceTimer = window.setInterval(tickAmbience, 180);
     else window.clearInterval(ambienceTimer);
     updateStatus();
@@ -188,10 +194,15 @@ export function createSoundscape(getScene) {
 
   musicButton.addEventListener('click', toggleMusic);
   ambienceButton.addEventListener('click', toggleAmbience);
-  volumeInput.addEventListener('input', () => {
-    volume = Number(volumeInput.value) / 100;
-    volumeValue.value = `${volumeInput.value}%`;
-    if (context) target(master, volume * .7, .045);
+  musicVolumeInput.addEventListener('input', () => {
+    musicVolume = Number(musicVolumeInput.value) / 100;
+    musicVolumeValue.value = `${musicVolumeInput.value}%`;
+    if (context && musicOn) target(musicBus, musicVolume, .045);
+  });
+  ambienceVolumeInput.addEventListener('input', () => {
+    ambienceVolume = Number(ambienceVolumeInput.value) / 100;
+    ambienceVolumeValue.value = `${ambienceVolumeInput.value}%`;
+    if (context && ambienceOn) target(ambienceBus, ambienceVolume, .045);
   });
   document.addEventListener('visibilitychange', () => {
     if (!context) return;
