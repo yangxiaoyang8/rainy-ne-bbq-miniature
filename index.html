@@ -7,7 +7,7 @@
     <meta name="description" content="雨夜东北烧烤店互动 3D 微缩模型" />
     <title>雨夜 · 东北烧烤店微缩模型</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?mix=2" />
     <script type="importmap">
       {
         "imports": {
@@ -59,7 +59,8 @@
           <button id="music-switch" class="audio-button" type="button" aria-pressed="false"><span aria-hidden="true">♫</span> 店内音乐</button>
           <button id="ambience-switch" class="audio-button" type="button" aria-pressed="false"><span aria-hidden="true">☂</span> 环境音效</button>
         </div>
-        <label class="volume-control" for="audio-volume"><span>音量</span><input id="audio-volume" type="range" min="0" max="100" value="55" aria-label="声音音量" /><output id="audio-volume-value" for="audio-volume">55%</output></label>
+        <label class="volume-control" for="music-volume"><span>音乐</span><input id="music-volume" type="range" min="0" max="100" value="70" aria-label="店内音乐音量" /><output id="music-volume-value" for="music-volume">70%</output></label>
+        <label class="volume-control" for="ambience-volume"><span>环境</span><input id="ambience-volume" type="range" min="0" max="100" value="30" aria-label="环境音效音量" /><output id="ambience-volume-value" for="ambience-volume">30%</output></label>
       </div>
       </div>
     </section>
@@ -72,6 +73,6 @@
     <div class="vignette"></div>
     <noscript>请开启 JavaScript 以查看互动模型。</noscript>
 
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js?mix=2"></script>
   </body>
 </html>
