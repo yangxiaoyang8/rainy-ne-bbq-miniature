@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createSoundscape } from './sound.js';
+import { createSoundscape } from './sound.js?mix=2';
 
 const container = document.querySelector('#scene');
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
